@@ -84,7 +84,7 @@ def reset_form():
 
 # SAVE PASSWORD -------------------------- #
 def save_password():
-    """if data is valid and confirmed, saves them as a new row in 'passwords.csv'"""
+    """if data is valid and confirmed, saves them as a new row in 'passwords.json'"""
     data = get_data()
     if is_valid(data):
         if confirm_entries(data):
