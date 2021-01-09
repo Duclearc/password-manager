@@ -62,6 +62,7 @@ def confirm_entries(data):
 
 
 def save_data(data):
+    # Error Handling
     try:
         with open('./passwords.csv') as passwords_file:
             passwords_file.read()
@@ -70,6 +71,7 @@ def save_data(data):
             passwords_file.write('website,email,username,password\n')
     finally:
         passwords_file.close()
+    # Updating file
     with open('./passwords.csv', mode='a+', newline='') as passwords_file:
         csv_writer = writer(passwords_file)
         csv_writer.writerow(list(data.values()))
