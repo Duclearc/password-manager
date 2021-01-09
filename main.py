@@ -44,7 +44,7 @@ def search_for_password():
             messagebox_title = 'No passwords on file'
             messagebox_message = 'No passwords have been found.'
         else:
-            try:
+            if query in file_data:
                 query_data = file_data[query]
                 messagebox_title = 'Password found!'
                 messagebox_message = f"{query}\n\n" \
@@ -53,7 +53,7 @@ def search_for_password():
                                      f"PASSWORD:\n{query_data['password']}\n\n" \
                                      f"Password has been copied to your clipboard"
                 pyperclip.copy(query_data['password'])
-            except KeyError:
+            else:
                 messagebox_title = 'No passwords under that name'
                 messagebox_message = 'No passwords have been found for this website.\n\n' \
                                      'Try retyping the URL exactly as you saved it'
