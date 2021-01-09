@@ -1,7 +1,7 @@
 from tkinter import Tk, PhotoImage, Canvas, Label, Entry, Button, END, messagebox
 from characters import letters, numbers, symbols
 from random import choice, randint, shuffle
-from csv import writer
+from json import load, dump
 import pyperclip
 
 # CONSTANTS ------------------------------ #
@@ -63,18 +63,17 @@ def confirm_entries(data):
 
 def save_data(data):
     try:
-        with open('./passwords.csv') as passwords_file:
-            passwords_file.read()
+        with open('./passwords.json') as passwords_file:
+            file_data = load(passwords_file)
     except FileNotFoundError:
-        with open('./passwords.csv', 'w') as passwords_file:
-            passwords_file.write('website,email,username,password\n')
-    finally:
-        passwords_file.close()
-    with open('./passwords.csv', mode='a+', newline='') as passwords_file:
-        csv_writer = writer(passwords_file)
-        csv_writer.writerow(list(data.values()))
-    messagebox.showinfo(title='Done',
-                        message='Your password has been copied to your clipboard and saved on file')
+        with open('./passwords.json', 'w') as passwords_file:
+            dump(data, passwords_file, indent=4)
+    else:
+        file_data.update(data)
+        with open('./passwords.json', 'w') as passwords_file:
+            dump(file_data, passwords_file, indent=4)
+        messagebox.showinfo(title='Done',
+                            message='Your password has been copied to your clipboard and saved on file')
 
 
 def reset_form():
@@ -89,7 +88,14 @@ def save_password():
     data = get_data()
     if is_valid(data):
         if confirm_entries(data):
-            save_data(data)
+            formatted_data = {
+                data['website']: {
+                    'email': data['email'],
+                    'username': data['username'],
+                    'password': data['password'],
+                }
+            }
+            save_data(formatted_data)
             reset_form()
 
 
