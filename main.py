@@ -51,7 +51,7 @@ def is_valid(data):
         return True
 
 
-def confirm_data(data):
+def confirm_entries(data):
     """opens a message box displaying all data. Returns True if user clicks 'Ok' and False if 'Cancel'"""
     confirmation_message = f"{data['website']}\n\n" \
                            f"EMAIL:\n{data['email']}\n\n" \
@@ -59,6 +59,22 @@ def confirm_data(data):
                            f"PASSWORD:\n{data['password']}\n\n\n" \
                            f"Proceed with data?"
     return messagebox.askokcancel(title=data['website'], message=confirmation_message)
+
+
+def save_data(data):
+    try:
+        with open('./passwords.csv') as passwords_file:
+            passwords_file.read()
+    except FileNotFoundError:
+        with open('./passwords.csv', 'w') as passwords_file:
+            passwords_file.write('website,email,username,password\n')
+    finally:
+        passwords_file.close()
+    with open('./passwords.csv', mode='a+', newline='') as passwords_file:
+        csv_writer = writer(passwords_file)
+        csv_writer.writerow(list(data.values()))
+    messagebox.showinfo(title='Done',
+                        message='Your password has been copied to your clipboard and saved on file')
 
 
 def reset_form():
@@ -72,12 +88,8 @@ def save_password():
     """if data is valid and confirmed, saves them as a new row in 'passwords.csv'"""
     data = get_data()
     if is_valid(data):
-        if confirm_data(data):
-            with open('./passwords.csv', mode='a+', newline='') as passwords_file:
-                csv_writer = writer(passwords_file)
-                csv_writer.writerow(list(data.values()))
-            messagebox.showinfo(title='Done',
-                                message='Your password has been copied to your clipboard and saved on file')
+        if confirm_entries(data):
+            save_data(data)
             reset_form()
 
 
