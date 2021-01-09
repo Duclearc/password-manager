@@ -30,6 +30,38 @@ def new_password():
 
 
 # FORM ACTIONS --------------------------- #
+def search_for_password():
+    """searches for the password on the local file."""
+    query = entry_website.get()
+    if len(query) == 0:
+        messagebox_title = "'Website' is required for search"
+        messagebox_message = 'Please make sure you\'ve added a search term'
+    else:
+        try:
+            with open('./passwords.json') as password_file:
+                file_data = load(password_file)
+        except FileNotFoundError:
+            messagebox_title = 'No passwords on file'
+            messagebox_message = 'No passwords have been found.'
+        else:
+            try:
+                query_data = file_data[query]
+                messagebox_title = 'Password found!'
+                messagebox_message = f"{query}\n\n" \
+                                     f"EMAIL:\n{query_data['email']}\n\n" \
+                                     f"USERNAME:\n{query_data['username']}\n\n" \
+                                     f"PASSWORD:\n{query_data['password']}\n\n" \
+                                     f"Password has been copied to your clipboard"
+                pyperclip.copy(query_data['password'])
+            except KeyError:
+                messagebox_title = 'No passwords under that name'
+                messagebox_message = 'No passwords have been found for this website.\n\n' \
+                                     'Try retyping the URL exactly as you saved it'
+
+    messagebox.showinfo(title=messagebox_title,
+                        message=messagebox_message)
+
+
 def get_data():
     """gets all data from input fields and returns it as a dictionary"""
     website = entry_website.get()
@@ -116,9 +148,12 @@ canvas.grid(column=0, row=0, columnspan=4)
 # website
 label_website = Label(text='Website:', font=FONT)
 label_website.grid(column=0, row=1)
-entry_website = Entry(width=63)
+entry_website = Entry(width=30)
 entry_website.focus()
-entry_website.grid(column=1, row=1, columnspan=3)
+entry_website.grid(column=1, row=1)
+# search website button
+search_website = Button(text='SEARCH  EXISTING  PASSWORD', width=32, fg='red', command=search_for_password)
+search_website.grid(column=2, row=1, columnspan=2)
 # email
 label_email = Label(text='Email:', font=FONT)
 label_email.grid(column=0, row=2)
@@ -137,7 +172,7 @@ label_password.grid(column=0, row=3)
 entry_password = Entry(width=30)
 entry_password.grid(column=1, row=3)
 # generate password button
-generate_password = Button(text='GENERATE PASSWORD', width=32, fg='red', command=new_password)
+generate_password = Button(text='GENERATE  PASSWORD', width=32, fg='red', command=new_password)
 generate_password.grid(column=2, row=3, columnspan=2)
 # save button
 save_password = Button(text='S A V E', width=48, font=FONT, fg='red', command=save_password)
